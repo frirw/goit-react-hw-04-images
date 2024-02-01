@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import { useState } from 'react';
 import styled from 'styled-components';
 import Notiflix from 'notiflix';
 
@@ -65,42 +65,36 @@ const SearchInput = styled.input`
   }
 `;
 
-class Searchbar extends Component {
-  state = {
-    query: '',
-    images: [],
-    page: 1,
+const Searchbar = ({ submit }) => {
+  const [query, setQuery] = useState('');
+
+  const handleChange = evt => {
+    setQuery(evt.target.value);
   };
 
-  handleChange = evt => {
-    this.setState({ query: evt.target.value });
-  };
-
-  handleSubmit = evt => {
+  const handleSubmit = evt => {
     evt.preventDefault();
-    if (this.state.query.trim() === '') {
+    if (query.trim() === '') {
       Notiflix.Notify.warning('Please, fill in the field!');
       return;
     }
-    this.props.submit(this.state);
+    submit(query);
   };
 
-  render() {
-    return (
-      <SearchbarWrapper>
-        <SearchForm onSubmit={this.handleSubmit}>
-          <SearchFormButton type="submit"></SearchFormButton>
-          <SearchInput
-            type="text"
-            onChange={this.handleChange}
-            autoComplete="off"
-            autoFocus
-            placeholder="Search images and photos"
-          />
-        </SearchForm>
-      </SearchbarWrapper>
-    );
-  }
-}
+  return (
+    <SearchbarWrapper>
+      <SearchForm onSubmit={handleSubmit}>
+        <SearchFormButton type="submit"></SearchFormButton>
+        <SearchInput
+          type="text"
+          onChange={handleChange}
+          autoComplete="off"
+          autoFocus
+          placeholder="Search images and photos"
+        />
+      </SearchForm>
+    </SearchbarWrapper>
+  );
+};
 
 export default Searchbar;

@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import { useEffect } from 'react';
 import styled from 'styled-components';
 
 const Overlay = styled.div`
@@ -24,38 +24,34 @@ const ModalImage = styled.img`
   height: auto;
 `;
 
-class Modal extends Component {
-  backDropClose = e => {
-    if (e.target.classList.contains('overlay')) {
-      this.props.close();
-    }
-  };
+const Modal = ({ imageUrl, alt, close }) => {
+  useEffect(() => {
+    const backDropClose = e => {
+      if (e.target.classList.contains('overlay')) {
+        close();
+      }
+    };
 
-  handleEsc = e => {
-    e.code === 'Escape' && this.props.close();
-  };
+    const handleEsc = e => {
+      e.code === 'Escape' && close();
+    };
 
-  componentDidMount() {
-    document.addEventListener('keydown', this.handleEsc);
-    document.addEventListener('click', this.backDropClose);
-  }
+    document.addEventListener('keydown', handleEsc);
+    document.addEventListener('click', backDropClose);
 
-  componentWillUnmount() {
-    document.removeEventListener('keydown', this.handleEsc);
-    document.removeEventListener('click', this.backDropClose);
-  }
+    return () => {
+      document.removeEventListener('keydown', handleEsc);
+      document.removeEventListener('click', backDropClose);
+    };
+  }, [close]);
 
-  render() {
-    const { imageUrl, id } = this.props;
-
-    return (
-      <Overlay className="overlay" onClick={this.backDropClose}>
-        <ModalContainer className="modal">
-          <ModalImage src={imageUrl} alt={id} />
-        </ModalContainer>
-      </Overlay>
-    );
-  }
-}
+  return (
+    <Overlay className="overlay">
+      <ModalContainer className="modal">
+        <ModalImage src={imageUrl} alt={alt} />
+      </ModalContainer>
+    </Overlay>
+  );
+};
 
 export default Modal;
